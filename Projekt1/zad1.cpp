@@ -18,16 +18,16 @@ int lenOfPoint(Pkt pkt)
 int main()
 {
     // zmien zeby nie była cała tablica a max 2 pkt/ 3
-    const unsigned long long n = 1000000 + 4;
+    const unsigned long long n = 1000000;
     int nDraws = 10000;
     vector<Pkt> a;
 
-    Pkt pkt[2];
+    Pkt pkt[3];
     Pkt mc; // pkt pomocniczy do monte carlo
 
     Pkt vec;
 
-    for (int j = 4; j <= n; j += 100000)
+    for (int j = 0; j <= n; j += 100000)
     {
         double kt = 2 * M_PI / j;
 
@@ -53,22 +53,27 @@ int main()
             {
                 pkt[0].x = pkt[1].x + vXO;
                 pkt[0].y = pkt[1].y + vYO;
+                pkt[2] = pkt[1];
             } else {
                 pkt[1].x = pkt[0].x + vXO;
                 pkt[1].y = pkt[0].y + vYO;
+                pkt[2] = pkt[1];
             }
             suma += sqrt(pow(vXO, 2) + pow(vYO, 2));
 
             vec.x = vXO;
             vec.y = vYO;
+            pkt[2].x += vec.x;
+            pkt[2].y += vec.y;
         }
 
         cout << "Dla n: " << j << " 2PI: "<< 2 * M_PI << " My 2PI: " << suma << endl;
-        cout << "Pkt koncowy: " << pkt[1].x << " " << pkt[1].y << "\n" << endl;
+        cout << "Pkt koncowy: " << pkt[2].x << " " << pkt[2].y << "\n" << endl;
     }
+
+    srand((unsigned)time(NULL));
     for (int j = 4; j <= n; j += 100000)
     {
-        srand((unsigned)time(NULL));
         for (int i = 0; i < j; i++)
         {
             mc.x = (2.0 * (double)rand() / (double)RAND_MAX - 1.0);
@@ -89,35 +94,35 @@ H1. TAK
     Dla n: 4 2PI: 6.28319 My 2PI: 4.24264
     Pkt koncowy: 0 -1
 
-    Dla n: 100004 2PI: 6.28319 My 2PI: 6.28313
-    Pkt koncowy: 1 -6.37789e-05
+    Dla n: 100000 2PI: 6.28319 My 2PI: 6.28312
+    Pkt koncowy: 1 -2.7068e-07
 
-    Dla n: 200004 2PI: 6.28319 My 2PI: 6.28316
-    Pkt koncowy: 1 -3.28444e-05
+    Dla n: 200000 2PI: 6.28319 My 2PI: 6.28316
+    Pkt koncowy: 1 -1.554e-06
 
-    Dla n: 300004 2PI: 6.28319 My 2PI: 6.28317
-    Pkt koncowy: 0.999997 -1.61865e-05
+    Dla n: 300000 2PI: 6.28319 My 2PI: 6.28316
+    Pkt koncowy: 0.999997 4.0669e-06
 
-    Dla n: 400004 2PI: 6.28319 My 2PI: 6.28318
-    Pkt koncowy: 1 -6.63241e-06
+    Dla n: 400000 2PI: 6.28319 My 2PI: 6.28318
+    Pkt koncowy: 1 7.8939e-06
 
-    Dla n: 500004 2PI: 6.28319 My 2PI: 6.28319
-    Pkt koncowy: 1 -2.83046e-06
+    Dla n: 500000 2PI: 6.28319 My 2PI: 6.28319
+    Pkt koncowy: 1 9.62964e-06
 
-    Dla n: 600004 2PI: 6.28319 My 2PI: 6.28319
-    Pkt koncowy: 0.999999 -6.40076e-05
+    Dla n: 600000 2PI: 6.28319 My 2PI: 6.28319
+    Pkt koncowy: 1 -5.25781e-05
 
-    Dla n: 700004 2PI: 6.28319 My 2PI: 6.28321
-    Pkt koncowy: 1 -1.74119e-05
+    Dla n: 700000 2PI: 6.28319 My 2PI: 6.28321
+    Pkt koncowy: 1 -1.10911e-05
 
-    Dla n: 800004 2PI: 6.28319 My 2PI: 6.2832
-    Pkt koncowy: 1 -2.35032e-05
+    Dla n: 800000 2PI: 6.28319 My 2PI: 6.2832
+    Pkt koncowy: 1 -1.76424e-05
 
-    Dla n: 900004 2PI: 6.28319 My 2PI: 6.28321
-    Pkt koncowy: 0.999999 3.81297e-05
+    Dla n: 900000 2PI: 6.28319 My 2PI: 6.28321
+    Pkt koncowy: 1 4.46791e-05
 
-    Dla n: 1000004 2PI: 6.28319 My 2PI: 6.28321
-    Pkt koncowy: 1 -1.25445e-05
+    Dla n: 1000000 2PI: 6.28319 My 2PI: 6.28321
+    Pkt koncowy: 1 -5.8419e-06
 
 H2.
 
