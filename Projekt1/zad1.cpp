@@ -10,7 +10,17 @@ struct Pkt {
     float y;
 };
 
-int lenOfPoint(Pkt pkt)
+float randomNumber()
+{
+    return (2.0 * (double)rand() / (double)RAND_MAX - 1.0);
+}
+
+float lenOfPoint(double a, double b)
+{
+    return sqrt(pow(a, 2) + pow(b, 2));
+}
+
+float lenOfPoint(Pkt pkt)
 {
     return sqrt(pow(pkt.x, 2) + pow(pkt.y, 2));
 }
@@ -18,8 +28,7 @@ int lenOfPoint(Pkt pkt)
 int main()
 {
     // zmien zeby nie była cała tablica a max 2 pkt/ 3
-    const unsigned long long n = 1000000;
-    int nDraws = 10000;
+    unsigned long long n = 1000000;
     vector<Pkt> a;
 
     Pkt pkt[3];
@@ -54,12 +63,13 @@ int main()
                 pkt[0].x = pkt[1].x + vXO;
                 pkt[0].y = pkt[1].y + vYO;
                 pkt[2] = pkt[1];
-            } else {
+            } else 
+            {
                 pkt[1].x = pkt[0].x + vXO;
                 pkt[1].y = pkt[0].y + vYO;
                 pkt[2] = pkt[1];
             }
-            suma += sqrt(pow(vXO, 2) + pow(vYO, 2));
+            suma += lenOfPoint(vXO, vYO);
 
             vec.x = vXO;
             vec.y = vYO;
@@ -74,10 +84,10 @@ int main()
     srand((unsigned)time(NULL));
     for (int j = 4; j <= n; j += 100000)
     {
-        for (int i = 0; i < j; i++)
+        for (int i = 0; i <= j; i++)
         {
-            mc.x = (2.0 * (double)rand() / (double)RAND_MAX - 1.0);
-            mc.y = (2.0 * (double)rand() / (double)RAND_MAX - 1.0);
+            mc.x = randomNumber();
+            mc.y = randomNumber();
 
             if (lenOfPoint(mc) < 1)
                 a.push_back(mc);
