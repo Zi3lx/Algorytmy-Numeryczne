@@ -28,20 +28,26 @@ float lenOfPoint(Pkt pkt)
 int main()
 {
     // zmien zeby nie była cała tablica a max 2 pkt/ 3
-    unsigned long long n = 1000000;
+    unsigned long long n = 100 + 4;
     vector<Pkt> a;
 
     Pkt pkt[3];
     Pkt mc; // pkt pomocniczy do monte carlo
-
     Pkt vec;
 
-    for (int j = 0; j <= n; j += 100000)
+    for (int j = 4; j <= n; j += 10)
     {
+        if (j != 4)
+            j -= 4;
         double kt = 2 * M_PI / j;
 
         vec.x = cos(kt)-1;
         vec.y = sin(kt);
+
+        Pkt vec0 = {0, 0};
+
+        vec0.x += vec.x;
+        vec0.y += vec.y;
 
         pkt[0].x = 1;
         pkt[0].y = 0;
@@ -73,17 +79,27 @@ int main()
 
             vec.x = vXO;
             vec.y = vYO;
+
+            vec0.x += vec.x;
+            vec0.y += vec.y;
+
             pkt[2].x += vec.x;
             pkt[2].y += vec.y;
         }
 
-        cout << "Dla n: " << j << " 2PI: "<< 2 * M_PI << " My 2PI: " << suma << endl;
-        cout << "Pkt koncowy: " << pkt[2].x << " " << pkt[2].y << "\n" << endl;
+        //cout << "n; " << j << "; 2PI; "<< 2 * M_PI << "; My_2PI; " << suma << endl;
+        //cout << "" << pkt[2].x << "; " << pkt[2].y << "" << endl;
+        //cout << vec0.x << " " <<  vec0.y << endl;
     }
 
+
+
     srand((unsigned)time(NULL));
-    for (int j = 4; j <= n; j += 100000)
+    for (int j = 4; j <= n; j += 10)
     {
+        if (j != 4)
+            j -= 4;
+            
         for (int i = 0; i <= j; i++)
         {
             mc.x = randomNumber();
@@ -93,8 +109,8 @@ int main()
                 a.push_back(mc);
         }
         double estimatedPI = 4.0 * a.size() / j;
-        cout << "Ilosc lososwanych: "<< j << " Ilość pkt < 1: " << a.size() << endl;
-        cout << "PI: " << M_PI << " My PI: " << estimatedPI << "\n" << endl;
+        cout << "n; "<< j << "; Ilość_pkt < 1; " << a.size() << "; PI; " << M_PI << "; My_PI; " << estimatedPI << endl;
+        //cout << "PI: " << M_PI << " My PI: " << estimatedPI << "\n" << endl;
         a.clear();
     }
 }
