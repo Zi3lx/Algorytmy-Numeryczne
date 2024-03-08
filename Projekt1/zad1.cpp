@@ -2,6 +2,7 @@
 #include <math.h>
 #include <cstdlib>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -12,10 +13,10 @@ struct Pkt {
 
 float randomNumber()
 {
-    return (2.0 * (double)rand() / (double)RAND_MAX - 1.0);
+    return (2.0 * (float)rand() / (float)RAND_MAX - 1.0);
 }
 
-float lenOfPoint(double a, double b)
+float lenOfPoint(float a, float b)
 {
     return sqrt(pow(a, 2) + pow(b, 2));
 }
@@ -25,29 +26,46 @@ float lenOfPoint(Pkt pkt)
     return sqrt(pow(pkt.x, 2) + pow(pkt.y, 2));
 }
 
+int checkTheSign(float k)
+{
+    if(k < 0)
+        return 1;
+    return 0;
+}
+
 int main()
 {
     // zmien zeby nie była cała tablica a max 2 pkt/ 3
-    unsigned long long n = 100 + 4;
-    vector<Pkt> a;
+    unsigned long long n = 100000 + 4;
+    vector<Pkt> pointArr;
 
     Pkt pkt[3];
     Pkt mc; // pkt pomocniczy do monte carlo
     Pkt vec;
+    vector<float> a[4];
 
-    for (int j = 4; j <= n; j += 10)
+    for (int j = 4; j <= n; j += 2000)
     {
+        for (int i = 0; i < 4; i++)
+            a[i].clear();
+        
         if (j != 4)
             j -= 4;
-        double kt = 2 * M_PI / j;
+
+        float kt = 2 * M_PI / j;
+
+        float sums[4];
 
         vec.x = cos(kt)-1;
         vec.y = sin(kt);
 
-        Pkt vec0 = {0, 0};
+        int helpX = checkTheSign(vec.x);
+        int helpY = checkTheSign(vec.y)+ 2;
 
-        vec0.x += vec.x;
-        vec0.y += vec.y;
+        a[helpX].push_back(vec.x);
+        a[helpY].push_back(vec.y);
+
+        Pkt vec0 = {vec.x, vec.y};
 
         pkt[0].x = 1;
         pkt[0].y = 0;
@@ -55,7 +73,7 @@ int main()
         pkt[1].x = cos(kt);
         pkt[1].y = sin(kt);
 
-        double suma = 0;
+        float suma = 0;
 
         for (int i = 2; i <= j; i++)
         {
@@ -83,19 +101,33 @@ int main()
             vec0.x += vec.x;
             vec0.y += vec.y;
 
+            int helpX = checkTheSign(vec.x);
+            int helpY = checkTheSign(vec.y)+ 2;
+
+            a[helpX].push_back(vec.x);
+            a[helpY].push_back(vec.y);
+
             pkt[2].x += vec.x;
             pkt[2].y += vec.y;
         }
 
-        //cout << "n; " << j << "; 2PI; "<< 2 * M_PI << "; My_2PI; " << suma << endl;
+        for (int i = 0; i < 4; i++)
+            sort(a[i].begin(), a[i].end());
+
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < a[i].size(); j++)
+                sums[i] += a[i][j];
+
+        //cout << "" << j << ";"<< 2 * M_PI << "; " << suma << endl;
         //cout << "" << pkt[2].x << "; " << pkt[2].y << "" << endl;
-        //cout << vec0.x << " " <<  vec0.y << endl;
+        //cout << vec0.x << "; " <<  vec0.y << endl;
+        //cout << sums[0] + sums[1] << "; " << sums[2] + sums[3] << endl;
     }
 
 
 
     srand((unsigned)time(NULL));
-    for (int j = 4; j <= n; j += 10)
+    for (int j = 4; j <= n; j += 2000)
     {
         if (j != 4)
             j -= 4;
@@ -106,12 +138,11 @@ int main()
             mc.y = randomNumber();
 
             if (lenOfPoint(mc) < 1)
-                a.push_back(mc);
+                pointArr.push_back(mc);
         }
-        double estimatedPI = 4.0 * a.size() / j;
-        cout << "n; "<< j << "; Ilość_pkt < 1; " << a.size() << "; PI; " << M_PI << "; My_PI; " << estimatedPI << endl;
-        //cout << "PI: " << M_PI << " My PI: " << estimatedPI << "\n" << endl;
-        a.clear();
+        float estimatedPI = 4.0 * pointArr.size() / j;
+        cout << j << "; " << pointArr.size() << "; " << M_PI << "; " << estimatedPI << endl;
+        pointArr.clear();
     }
 }
 
