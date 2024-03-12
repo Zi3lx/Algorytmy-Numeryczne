@@ -111,8 +111,8 @@ int main()
             pkt[2].y += vec.y;
         }
 
-        for (int i = 0; i < 4; i++)
-            sort(a[i].begin(), a[i].end());
+        //for (int i = 0; i < 4; i++)
+        //    sort(a[i].begin(), a[i].end());
 
         for (int i = 0; i < 4; i++)
             for (int j = 0; j < a[i].size(); j++)
@@ -121,7 +121,7 @@ int main()
         //cout << "" << j << ";"<< 2 * M_PI << "; " << suma << endl;
         //cout << "" << pkt[2].x << "; " << pkt[2].y << "" << endl;
         //cout << vec0.x << "; " <<  vec0.y << endl;
-        //cout << sums[0] + sums[1] << "; " << sums[2] + sums[3] << endl;
+        cout << sums[0] + sums[1] << "; " << sums[2] + sums[3] << endl;
     }
 
 
@@ -141,7 +141,7 @@ int main()
                 pointArr.push_back(mc);
         }
         float estimatedPI = 4.0 * pointArr.size() / j;
-        cout << j << "; " << pointArr.size() << "; " << M_PI << "; " << estimatedPI << endl;
+        //cout << j << "; " << pointArr.size() << "; " << M_PI << "; " << estimatedPI << endl;
         pointArr.clear();
     }
 }
