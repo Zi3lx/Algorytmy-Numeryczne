@@ -6,216 +6,107 @@
 
 using namespace std;
 
-struct Pkt {
+struct Points {
     float x;
     float y;
 };
 
 float randomNumber()
 {
-    return (2.0 * (float)rand() / (float)RAND_MAX - 1.0);
+    return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 }
 
-float lenOfPoint(float a, float b)
-{
-    return sqrt(pow(a, 2) + pow(b, 2));
-}
-
-float lenOfPoint(Pkt pkt)
-{
-    return sqrt(pow(pkt.x, 2) + pow(pkt.y, 2));
-}
-
-int checkTheSign(float k)
-{
-    if(k < 0)
-        return 1;
-    return 0;
+float length(Points v) {
+    return sqrt(v.x * v.x + v.y * v.y);
 }
 
 int main()
 {
-    // zmien zeby nie była cała tablica a max 2 pkt/ 3
-    unsigned long long n = 100000 + 4;
-    vector<Pkt> pointArr;
+    int n = 1000; // liczba boków wielokąta
+    Points mc;
+    vector<Points> mc_points;
+    vector<float> x_plus, x_minus, y_plus, y_minus;
 
-    Pkt pkt[3];
-    Pkt mc; // pkt pomocniczy do monte carlo
-    Pkt vec;
-    vector<float> a[4];
-
-    for (int j = 4; j <= n; j += 2000)
+    for (int j = 1010; j < 10001; j += 10000000)
     {
-        for (int i = 0; i < 4; i++)
-            a[i].clear();
-        
-        if (j != 4)
-            j -= 4;
+        float theta = 2 * M_PI / j;
 
-        float kt = 2 * M_PI / j;
+        Points w_prev = {cos(theta) - 1, sin(theta)};
+        Points last_point = {1, 0};
+        Points vecZero = {0, 0};
+        float ob = 0;
 
-        float sums[4];
-
-        vec.x = cos(kt)-1;
-        vec.y = sin(kt);
-
-        int helpX = checkTheSign(vec.x);
-        int helpY = checkTheSign(vec.y)+ 2;
-
-        a[helpX].push_back(vec.x);
-        a[helpY].push_back(vec.y);
-
-        Pkt vec0 = {vec.x, vec.y};
-
-        pkt[0].x = 1;
-        pkt[0].y = 0;
-        
-        pkt[1].x = cos(kt);
-        pkt[1].y = sin(kt);
-
-        float suma = 0;
-
-        for (int i = 2; i <= j; i++)
+        for (int i = 0; i < j; i++) 
         {
-            int help = i % 2;
-
-            float vXO = cos(kt) * vec.x - (sin(kt) * vec.y);
-            float vYO = sin(kt) * vec.x + (cos(kt) * vec.y);
-            
-            if (help == 0)
-            {
-                pkt[0].x = pkt[1].x + vXO;
-                pkt[0].y = pkt[1].y + vYO;
-                pkt[2] = pkt[1];
-            } else 
-            {
-                pkt[1].x = pkt[0].x + vXO;
-                pkt[1].y = pkt[0].y + vYO;
-                pkt[2] = pkt[1];
-            }
-            suma += lenOfPoint(vXO, vYO);
-
-            vec.x = vXO;
-            vec.y = vYO;
-
-            vec0.x += vec.x;
-            vec0.y += vec.y;
-
-            int helpX = checkTheSign(vec.x);
-            int helpY = checkTheSign(vec.y)+ 2;
-
-            a[helpX].push_back(vec.x);
-            a[helpY].push_back(vec.y);
-
-            pkt[2].x += vec.x;
-            pkt[2].y += vec.y;
+            Points vec = {
+                cos(theta) * w_prev.x - sin(theta) * w_prev.y,
+                sin(theta) * w_prev.x + cos(theta) * w_prev.y
+            };
+            last_point.x += vec.x;
+            last_point.y += vec.y;
+            vecZero.x += vec.x;
+            vecZero.y += vec.y;
+            (vec.x > 0) ? x_plus.push_back(vec.x) : x_minus.push_back(vec.x);
+            (vec.y > 0) ? y_plus.push_back(vec.y) : y_minus.push_back(vec.y);
+            ob += length(vec);
+            w_prev = vec;
         }
 
-        //for (int i = 0; i < 4; i++)
-        //    sort(a[i].begin(), a[i].end());
+        float Sx_plus = 0, Sx_minus = 0, Sy_plus = 0, Sy_minus = 0;
+        
+        for (float x : x_plus)
+            Sx_plus += x;
+        for (float x : x_minus)
+            Sx_minus += x;
+        for (float y : y_plus)
+            Sy_plus += y;
+        for (float y : y_minus)
+            Sy_minus += y;
 
-        for (int i = 0; i < 4; i++)
-            for (int j = 0; j < a[i].size(); j++)
-                sums[i] += a[i][j];
+        float sum_x = Sx_plus + Sx_minus;
+        float sum_y = Sy_plus + Sy_minus;
 
-        //cout << "" << j << ";"<< 2 * M_PI << "; " << suma << endl;
-        //cout << "" << pkt[2].x << "; " << pkt[2].y << "" << endl;
-        //cout << vec0.x << "; " <<  vec0.y << endl;
-        cout << sums[0] + sums[1] << "; " << sums[2] + sums[3] << endl;
-    }
+        cout << j << "; " << 2*M_PI << "; " << ob << "; " << last_point.x << "; " << last_point.y << "; " << vecZero.x << "; " << vecZero.y << "; " << sum_x << "; " << sum_y;
+
+        sort(x_plus.begin(), x_plus.end());
+        sort(x_minus.begin(), x_minus.end(), greater<float>());
+        sort(y_plus.begin(), y_plus.end());
+        sort(y_minus.begin(), y_minus.end(), greater<float>());
+
+        Sx_plus = 0; Sx_minus = 0; Sy_plus = 0; Sy_minus = 0;
+        
+        for (float x : x_plus)
+            Sx_plus += x;
+        for (float x : x_minus) 
+            Sx_minus += x;
+        for (float y : y_plus)
+            Sy_plus += y;
+        for (float y : y_minus)
+            Sy_minus += y;
+
+        float sum_x_sorted = Sx_plus + Sx_minus;
+        float sum_y_sorted = Sy_plus + Sy_minus;
+
+        cout << "; " << sum_x_sorted << "; " << sum_y_sorted;
 
 
+        srand((unsigned)time(NULL));
 
-    srand((unsigned)time(NULL));
-    for (int j = 4; j <= n; j += 2000)
-    {
-        if (j != 4)
-            j -= 4;
-            
-        for (int i = 0; i <= j; i++)
+        for (int i = 0; i < j; i++)
         {
             mc.x = randomNumber();
             mc.y = randomNumber();
 
-            if (lenOfPoint(mc) < 1)
-                pointArr.push_back(mc);
+
+            if (length(mc) < 1)
+                mc_points.push_back(mc);
         }
-        float estimatedPI = 4.0 * pointArr.size() / j;
-        //cout << j << "; " << pointArr.size() << "; " << M_PI << "; " << estimatedPI << endl;
-        pointArr.clear();
+        float estimatedPI = 4.0 * mc_points.size() / j;
+        cout << "; " << j << "; " << estimatedPI << "; " << mc_points.size() << endl;
+        mc_points.clear();
+        x_plus.clear();
+        x_minus.clear();
+        y_plus.clear(); 
+        y_minus.clear();
     }
 }
-
-/*
-H1. TAK
-    Dla n: 4 2PI: 6.28319 My 2PI: 4.24264
-    Pkt koncowy: 0 -1
-
-    Dla n: 100000 2PI: 6.28319 My 2PI: 6.28312
-    Pkt koncowy: 1 -2.7068e-07
-
-    Dla n: 200000 2PI: 6.28319 My 2PI: 6.28316
-    Pkt koncowy: 1 -1.554e-06
-
-    Dla n: 300000 2PI: 6.28319 My 2PI: 6.28316
-    Pkt koncowy: 0.999997 4.0669e-06
-
-    Dla n: 400000 2PI: 6.28319 My 2PI: 6.28318
-    Pkt koncowy: 1 7.8939e-06
-
-    Dla n: 500000 2PI: 6.28319 My 2PI: 6.28319
-    Pkt koncowy: 1 9.62964e-06
-
-    Dla n: 600000 2PI: 6.28319 My 2PI: 6.28319
-    Pkt koncowy: 1 -5.25781e-05
-
-    Dla n: 700000 2PI: 6.28319 My 2PI: 6.28321
-    Pkt koncowy: 1 -1.10911e-05
-
-    Dla n: 800000 2PI: 6.28319 My 2PI: 6.2832
-    Pkt koncowy: 1 -1.76424e-05
-
-    Dla n: 900000 2PI: 6.28319 My 2PI: 6.28321
-    Pkt koncowy: 1 4.46791e-05
-
-    Dla n: 1000000 2PI: 6.28319 My 2PI: 6.28321
-    Pkt koncowy: 1 -5.8419e-06
-
-H2.
-
-H3.
-
-H4. Z moich testw wynika ze NIE
-    Ilosc lososwanych: 4 Ilość pkt < 1: 2
-    PI: 3.14159 My PI: 2
-
-    Ilosc lososwanych: 100004 Ilość pkt < 1: 78546
-    PI: 3.14159 My PI: 3.14171
-
-    Ilosc lososwanych: 200004 Ilość pkt < 1: 156936
-    PI: 3.14159 My PI: 3.13866
-
-    Ilosc lososwanych: 300004 Ilość pkt < 1: 235385
-    PI: 3.14159 My PI: 3.13842
-
-    Ilosc lososwanych: 400004 Ilość pkt < 1: 313936
-    PI: 3.14159 My PI: 3.13933
-
-    Ilosc lososwanych: 500004 Ilość pkt < 1: 392424
-    PI: 3.14159 My PI: 3.13937
-
-    Ilosc lososwanych: 600004 Ilość pkt < 1: 470966
-    PI: 3.14159 My PI: 3.13975
-
-    Ilosc lososwanych: 700004 Ilość pkt < 1: 549267
-    PI: 3.14159 My PI: 3.13865
-
-    Ilosc lososwanych: 800004 Ilość pkt < 1: 627605
-    PI: 3.14159 My PI: 3.13801
-
-    Ilosc lososwanych: 900004 Ilość pkt < 1: 706131
-    PI: 3.14159 My PI: 3.13835
-
-    Ilosc lososwanych: 1000004 Ilość pkt < 1: 784622
-    PI: 3.14159 My PI: 3.13848
-*/
