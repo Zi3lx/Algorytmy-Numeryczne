@@ -23,12 +23,12 @@ float length(Points v) {
 
 int main()
 {
-    int n = 1000; // liczba boków wielokąta
+    int n = 2030011; // liczba boków wielokąta
     Points mc;
     vector<Points> mc_points;
     vector<float> x_plus, x_minus, y_plus, y_minus;
 
-    for (int j = 4; j < 1000; j += 10)
+    for (int j = 10; j < n; j += 10000)
     {
         float theta = 2 * M_PI / j;
 
@@ -67,7 +67,7 @@ int main()
         float sum_x = Sx_plus + Sx_minus;
         float sum_y = Sy_plus + Sy_minus;
 
-        //cout << j << "; " << 2*M_PI << "; " << ob << "; " << last_point.x << "; " << last_point.y << "; " << vecZero.x << "; " << vecZero.y << "; " << sum_x << "; " << sum_y;
+        //cout << j << "; " << 2*M_PI << "; " << ob << ";"<< last_point.x << "; " << last_point.y << "; " << vecZero.x << "; " << vecZero.y << "; " << sum_x << "; " << sum_y;
 
         sort(x_plus.begin(), x_plus.end());
         sort(x_minus.begin(), x_minus.end(), greater<float>());
@@ -115,7 +115,7 @@ int main()
         float x_queue_sum = Sx_plus + Sx_minus;
         float y_queue_sum = Sy_plus + Sy_minus;
 
-        cout << j << ";" << x_queue_sum << ";" << y_queue_sum << endl;
+        //cout << ";"<< j << ";" << x_queue_sum << ";" << y_queue_sum << endl;
 
         srand((unsigned)time(NULL));
 
@@ -129,7 +129,7 @@ int main()
                 mc_points.push_back(mc);
         }
         float estimatedPI = 4.0 * mc_points.size() / j;
-        //cout << "; " << j << "; " << estimatedPI << "; " << mc_points.size() << endl;
+        cout << j << ";" << estimatedPI << "; " << mc_points.size() << endl;
         mc_points.clear();
         x_plus.clear();
         x_minus.clear();
