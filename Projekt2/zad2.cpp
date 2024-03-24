@@ -40,7 +40,8 @@ int main()
 {
     int n = 2, s = 3;
     int tests = 10000;
-
+    vector<vector<float>> matrix;
+    
     srand((unsigned)time(NULL));
     double monte_carlo_proability = monteCarlo(n , s, tests);
     cout << monte_carlo_proability << endl;

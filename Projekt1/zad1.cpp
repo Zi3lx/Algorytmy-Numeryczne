@@ -23,7 +23,7 @@ float length(Points v) {
 
 int main()
 {
-    int n = 2030011; // liczba boków wielokąta
+    int n = 2030010; // liczba boków wielokąta
     Points mc;
     vector<Points> mc_points;
     vector<float> x_plus, x_minus, y_plus, y_minus;
@@ -88,7 +88,7 @@ int main()
         float sum_x_sorted = Sx_plus + Sx_minus;
         float sum_y_sorted = Sy_plus + Sy_minus;
 
-        //cout << "; " << sum_x_sorted << "; " << sum_y_sorted;
+        cout << "; " << sum_x_sorted << "; " << sum_y_sorted;
 
         priority_queue<float, vector<float>, greater<float> > x_plus_queue(x_plus.begin(), x_plus.end());
         priority_queue<float, vector<float>, greater<float> > y_plus_queue(y_plus.begin(), y_plus.end());
@@ -129,7 +129,7 @@ int main()
                 mc_points.push_back(mc);
         }
         float estimatedPI = 4.0 * mc_points.size() / j;
-        cout << j << ";" << estimatedPI << "; " << mc_points.size() << endl;
+        //cout << "; " << j << "; ;" << estimatedPI << "; " << mc_points.size() << endl;
         mc_points.clear();
         x_plus.clear();
         x_minus.clear();
