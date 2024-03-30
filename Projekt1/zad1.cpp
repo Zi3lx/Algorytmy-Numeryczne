@@ -4,38 +4,43 @@
 #include <vector>
 #include <algorithm>
 #include <queue>
+#include <iomanip>
 
 using namespace std;
 
 struct Points {
-    float x;
-    float y;
+    double x;
+    double y;
 };
 
-float randomNumber()
+double randomNumber()
 {
-    return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+    return static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
 }
 
-float length(Points v) {
+double length(Points v) {
     return sqrt(v.x * v.x + v.y * v.y);
+}
+
+double length(double a, double b) {
+    return sqrt(a*a + b*b);
 }
 
 int main()
 {
-    int n = 2030011; // liczba boków wielokąta
+    int n = 2030001; // liczba boków wielokąta
     Points mc;
     vector<Points> mc_points;
-    vector<float> x_plus, x_minus, y_plus, y_minus;
+    vector<double> x_plus, x_minus, y_plus, y_minus;
 
-    for (int j = 10; j < n; j += 10000)
+    for (int j = 10000; j < n; j += 10000)
     {
-        float theta = 2 * M_PI / j;
+        double theta = 2 * M_PI / j;
 
         Points w_prev = {cos(theta) - 1, sin(theta)};
         Points last_point = {1, 0};
         Points vecZero = {0, 0};
-        float ob = 0;
+        double ob = 0;
 
         for (int i = 0; i < j; i++) 
         {
@@ -53,45 +58,49 @@ int main()
             w_prev = vec;
         }
 
-        float Sx_plus = 0, Sx_minus = 0, Sy_plus = 0, Sy_minus = 0;
+        double Sx_plus = 0, Sx_minus = 0, Sy_plus = 0, Sy_minus = 0;
         
-        for (float x : x_plus)
+        for (double x : x_plus)
             Sx_plus += x;
-        for (float x : x_minus)
+        for (double x : x_minus)
             Sx_minus += x;
-        for (float y : y_plus)
+        for (double y : y_plus)
             Sy_plus += y;
-        for (float y : y_minus)
+        for (double y : y_minus)
             Sy_minus += y;
 
-        float sum_x = Sx_plus + Sx_minus;
-        float sum_y = Sy_plus + Sy_minus;
+        double sum_x = Sx_plus + Sx_minus;
+        double sum_y = Sy_plus + Sy_minus;
 
-        //cout << j << "; " << 2*M_PI << "; " << ob << ";"<< last_point.x << "; " << last_point.y << "; " << vecZero.x << "; " << vecZero.y << "; " << sum_x << "; " << sum_y;
+        double lengthOfSum = length(sum_x, sum_y);
+
+        cout << j << "; "<< fixed << setprecision(16) << 2*M_PI << "; " << ob << ";"<< last_point.x << "; " << last_point.y << "; " << vecZero.x << "; " << vecZero.y << "; " << sum_x << "; " << sum_y;
 
         sort(x_plus.begin(), x_plus.end());
-        sort(x_minus.begin(), x_minus.end(), greater<float>());
+        sort(x_minus.begin(), x_minus.end(), greater<double>());
         sort(y_plus.begin(), y_plus.end());
-        sort(y_minus.begin(), y_minus.end(), greater<float>());
+        sort(y_minus.begin(), y_minus.end(), greater<double>());
 
         Sx_plus = 0; Sx_minus = 0; Sy_plus = 0; Sy_minus = 0;
         
-        for (float x : x_plus)
+        for (double x : x_plus)
             Sx_plus += x;
-        for (float x : x_minus) 
+        for (double x : x_minus) 
             Sx_minus += x;
-        for (float y : y_plus)
+        for (double y : y_plus)
             Sy_plus += y;
-        for (float y : y_minus)
+        for (double y : y_minus)
             Sy_minus += y;
         
-        float sum_x_sorted = Sx_plus + Sx_minus;
-        float sum_y_sorted = Sy_plus + Sy_minus;
+        double sum_x_sorted = Sx_plus + Sx_minus;
+        double sum_y_sorted = Sy_plus + Sy_minus;
 
-        //cout << "; " << sum_x_sorted << "; " << sum_y_sorted;
+        double lengthSortedSum = length(sum_x_sorted, sum_x_sorted);
 
-        priority_queue<float, vector<float>, greater<float> > x_plus_queue(x_plus.begin(), x_plus.end());
-        priority_queue<float, vector<float>, greater<float> > y_plus_queue(y_plus.begin(), y_plus.end());
+        cout << "; " << sum_x_sorted << "; " << sum_y_sorted;
+
+        priority_queue<double, vector<double>, greater<double> > x_plus_queue(x_plus.begin(), x_plus.end());
+        priority_queue<double, vector<double>, greater<double> > y_plus_queue(y_plus.begin(), y_plus.end());
 
         Sx_plus = 0; Sx_minus = 0; Sy_plus = 0; Sy_minus = 0;
         
@@ -112,14 +121,14 @@ int main()
             y_minus.pop_back();
         }
 
-        float x_queue_sum = Sx_plus + Sx_minus;
-        float y_queue_sum = Sy_plus + Sy_minus;
+        double x_queue_sum = Sx_plus + Sx_minus;
+        double y_queue_sum = Sy_plus + Sy_minus;
+        double lenOfQueue = length(x_queue_sum, y_queue_sum);
 
-        //cout << ";"<< j << ";" << x_queue_sum << ";" << y_queue_sum << endl;
-
+        cout << ";" << x_queue_sum << ";" << y_queue_sum << ";" << lengthOfSum << ";" << lengthSortedSum << ";" << ((lengthSortedSum < lengthOfSum) ? 1 : 0) << ";" << lenOfQueue << ";" << ((lenOfQueue < lengthOfSum) ? 1 : 0) << "; bład" << abs(2*M_PI - ob) << ";" << endl;
         srand((unsigned)time(NULL));
 
-        for (int i = 0; i < j; i++)
+        /*for (int i = 0; i < j; i++)
         {
             mc.x = randomNumber();
             mc.y = randomNumber();
@@ -128,12 +137,12 @@ int main()
             if (length(mc) < 1)
                 mc_points.push_back(mc);
         }
-        float estimatedPI = 4.0 * mc_points.size() / j;
+        double estimatedPI = 4.0 * mc_points.size() / j;
         cout << j << ";" << estimatedPI << "; " << mc_points.size() << endl;
         mc_points.clear();
         x_plus.clear();
         x_minus.clear();
         y_plus.clear(); 
-        y_minus.clear();
+        y_minus.clear();*/
     }
 }
